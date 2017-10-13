@@ -24,21 +24,21 @@ class Timer:
         self.interval = self.end - self.start
 
 
-# mods = []
-# for i in range(len(modifiers)):
-#     mods += list(itertools.permutations(modifiers, i+1))
-#
-# players = []
-# for base in bases:
-#     for mod in mods:
-#         player = base
-#         for f in mod:
-#             player = f(player)
-#         players.append(player)
-#
-# players = bases+players
+mods = []
+for i in range(len(modifiers)):
+    mods += list(itertools.permutations(modifiers, i+1))
 
-players = [m(b) for m in modifiers for b in bases] + bases
+players = []
+for base in bases:
+    for mod in mods:
+        player = base
+        for f in mod:
+            player = f(player)
+        players.append(player)
+
+players = bases+players
+
+# players = [m(b) for m in modifiers for b in bases] + bases
 
 
 times = []
@@ -46,27 +46,31 @@ times = []
 points = Counter()
 
 
-for _ in range(100):
-    games = []
-    for p in itertools.combinations(players, 4):
-        games.append(Clobrdo([player() for player in p]))
-
 games = []
 
 for p in itertools.combinations(players, 4):
     games.append(Clobrdo([player() for player in p]))
 
-games = games[:100]
+l = len(games)
+aver = 0
+print(l)
 
-with Timer() as t:
-    for i, game in enumerate(games):
+for i, game in enumerate(games):
+    with Timer() as t:
         rank = game.play()
         for score, player in enumerate(reversed(rank)):
             points[str(player)] += score
-        if not i % 100:
-            print(points.most_common(4))
-print(t.interval)
+    a = t.interval
+    aver = (aver*(i+1) + a)/(i+2)
+    if not i % 100:
+        print(a)
+        print(aver)
+        print(i, (l - i)*aver/60)
+        print(points.most_common(4))
+        print()
 
+
+print(points)
 
 
 
