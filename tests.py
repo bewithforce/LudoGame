@@ -1,10 +1,19 @@
 from strategies import *
 import itertools
-import functools
 from collections import Counter
-from threading import (Thread, Lock)
-
 import time
+import dill as pickle
+
+
+def save(obj):
+    return obj.__class__, obj.__dict__
+
+
+def load(cls, attributes):
+    obj = cls.__new__(cls)
+    obj.__dict__.update(attributes)
+    return obj
+
 
 class Timer:
     def __enter__(self):
@@ -36,53 +45,51 @@ players = [m(b) for m in modifiers for b in bases] + bases
 times = []
 
 points = Counter()
-lock = Lock()
 
-def worker(game):
-    rank = game.play()
-    for score, player in enumerate(reversed(rank)):
-        with lock:
-            points[str(player)] += score
-    # print(points.most_common(3))
-
-threads = []
 
 for _ in range(100):
     games = []
     for p in itertools.combinations(players, 4):
         games.append(Clobrdo([player() for player in p]))
 
-    for game in games:
-        t = Thread(target=worker, args=(game,))
-        threads.append(t)
-        t.start()
+games = []
 
-    for t in threads:
-        t.join()
+for p in itertools.combinations(players, 4):
+    games.append(Clobrdo([player() for player in p]))
 
-    print(points)
+pickle.dump(games, open("test.p", "wb"))
 
 
 
 
 # points = Counter()
 
-
 # def threaded():
 #     clobrdo = Clobrdo([OneByOne(), Random(), OneByOne(), Random()])
 #     for i, p in enumerate(reversed(clobrdo.play())):
 #         points[p.name] += i
 #
-# for _ in range(10000):
-#     thread = Thread(target=threaded).start()
-# print(points)
-
-# no_moves = []
+# q = Queue()
+# threads = []
+# number_of_threads = 10
+# for i in range(number_of_threads):
+#     t = Thread(target=worker)
+#     t.start()
+#     threads.append(t)
 #
 #
-# for _ in range(100):
-#     clobrdo = Clobrdo([Even(1), Even(2), Even(3), Even(4)])
-#     print(clobrdo.play())
-#     no_moves.append(clobrdo.n_moves)
+#     if i == 100:
+#         break
 #
-# print(max(no_moves))
+# # block until all tasks are done
+# q.join()
+#
+# # stop workers
+# for i in range(number_of_threads):
+#     q.put(None)
+# for t in threads:
+#     t.join()
+# times.append(timer.interval)
+# print(timer.interval)
+#
+# print(sum(times)/len(times))
