@@ -2,7 +2,6 @@ from strategies import *
 import itertools
 from collections import Counter
 import time
-import dill as pickle
 
 
 def save(obj):
@@ -57,7 +56,16 @@ games = []
 for p in itertools.combinations(players, 4):
     games.append(Clobrdo([player() for player in p]))
 
-pickle.dump(games, open("test.p", "wb"))
+games = games[:100]
+
+with Timer() as t:
+    for i, game in enumerate(games):
+        rank = game.play()
+        for score, player in enumerate(reversed(rank)):
+            points[str(player)] += score
+        if not i % 100:
+            print(points.most_common(4))
+print(t.interval)
 
 
 
