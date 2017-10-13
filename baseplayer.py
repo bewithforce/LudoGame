@@ -1,7 +1,7 @@
 import clobrdo
 
 
-class BasePlayer:
+class BasePlayer(object):
     def __init__(self, name=None):
         self.name = name
         self.start = None

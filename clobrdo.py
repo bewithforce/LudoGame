@@ -7,7 +7,7 @@ class IllegalMove(Exception):
     def __init__(self, message, player, game):
         self.player = player
         self.board = game.board
-        super().__init__(message, self.player, self.board)
+        super(IllegalMove, self).__init__(message, self.player, self.board)
 
 
 class DidNotMove(IllegalMove):
@@ -18,7 +18,7 @@ class MovedMoreThanOnce(IllegalMove):
     pass
 
 
-class Clobrdo:
+class Clobrdo(object):
     """Main class, holds the game state, checks all the rules."""
 
     def __init__(self, players, n_pieces=4, length=10, n_die=6):
@@ -64,6 +64,7 @@ class Clobrdo:
         possible = self.n_moves_possible(player)
         if possible == 0:
             player.moves_stalled += 1
+
         player.strategy()
 
         if not self.moved and possible:

@@ -8,7 +8,7 @@ class OneByOne(BasePlayer):
     available."""
 
     def __init__(self, name=""):
-        super().__init__(name=name)
+        super(OneByOne, self).__init__(name=name)
         self.name = "OneByOne(%s)" % self.name
 
     def strategy(self):
@@ -23,7 +23,7 @@ class Random(BasePlayer):
     """Will randomly choose the piece to move with."""
 
     def __init__(self, name=""):
-        super().__init__(name=name)
+        super(Random, self).__init__(name=name)
         self.name = "Random(%s)" % self.name
 
     def strategy(self):
@@ -38,7 +38,7 @@ class Even(BasePlayer):
     """Will try to distribute the moves between pieces evenly, will enter new piece every time the chance is given"""
 
     def __init__(self, name=""):
-        super().__init__(name=name)
+        super(Even, self).__init__(name=name)
         self.name = "Even(%s)" % self.name
 
     def strategy(self):
@@ -54,7 +54,7 @@ def make_aggressive(base):
         """Will throw out enemy's piece when given chance, otherwise acts like player given in `default` argument"""
 
         def __init__(self, name=""):
-            super().__init__(name=name)
+            super(Aggressive, self).__init__(name=name)
             self.name = "Aggressive(%s)" % self.name
 
         def strategy(self):
@@ -78,7 +78,7 @@ def make_cautious(base):
 
     class Cautious(base):
         def __init__(self, name=""):
-            super().__init__(name=name)
+            super(Cautious, self).__init__(name=name)
             self.name = "Cautious(%s)" % self.name
 
         def strategy(self):
@@ -93,7 +93,7 @@ def make_cautious(base):
 def make_finishing(base):
     class Finishing(base):
         def __init__(self, name=""):
-            super().__init__(name=name)
+            super(Finishing, self).__init__(name=name)
             self.name = "Finishing(%s)" % self.name
 
         def strategy(self):
