@@ -1,17 +1,11 @@
+"""Note that these files are not essential and are just quickly put together
+to test, run and visualize the results of different strategies."""
+
 from strategies import *
+from clobrdo import Clobrdo
 import itertools
 from collections import Counter
 import time
-
-
-def save(obj):
-    return obj.__class__, obj.__dict__
-
-
-def load(cls, attributes):
-    obj = cls.__new__(cls)
-    obj.__dict__.update(attributes)
-    return obj
 
 
 class Timer:
@@ -71,37 +65,3 @@ for i, game in enumerate(games):
 
 
 print(points)
-
-
-
-# points = Counter()
-
-# def threaded():
-#     clobrdo = Clobrdo([OneByOne(), Random(), OneByOne(), Random()])
-#     for i, p in enumerate(reversed(clobrdo.play())):
-#         points[p.name] += i
-#
-# q = Queue()
-# threads = []
-# number_of_threads = 10
-# for i in range(number_of_threads):
-#     t = Thread(target=worker)
-#     t.start()
-#     threads.append(t)
-#
-#
-#     if i == 100:
-#         break
-#
-# # block until all tasks are done
-# q.join()
-#
-# # stop workers
-# for i in range(number_of_threads):
-#     q.put(None)
-# for t in threads:
-#     t.join()
-# times.append(timer.interval)
-# print(timer.interval)
-#
-# print(sum(times)/len(times))

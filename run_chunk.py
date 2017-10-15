@@ -1,3 +1,8 @@
+"""Note that these files are not essential and are just quickly put together
+to test, run and visualize the results of different strategies.
+This is done mainly to spread the load to multiple cores."""
+
+from clobrdo import Clobrdo
 from collections import defaultdict
 from strategies import *
 import pickle
@@ -26,7 +31,10 @@ for no, game in enumerate(games):
         for mod in mods:
             base = mod+"("+base
         base += ")"*len(mods)
-        players.append(eval(base+"(%s)" % name))
+        if name in ["Aggressive", "Cautious", "Finishing", "Even", "OneByOne",
+                    "Random"]:
+            # How many points will I loose for this quick and dirty eval?
+            players.append(eval(base+"(%s)" % name))
     rank = Clobrdo(players).play()
     for pos, player in enumerate(rank):
         results[str(player)][pos] += 1
@@ -34,5 +42,7 @@ for no, game in enumerate(games):
     if not no % 100:
         print(file, no, "/", l)
 
-pickle.dump(dict(results), open("results_%s" % file, "wb"))
+with open("results_%s" % file, "wb") as f:
+    pickle.dump(dict(results), f)
+
 print(file, "Done")

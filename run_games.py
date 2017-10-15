@@ -1,9 +1,14 @@
+"""Note that these files are not essential and are just quickly put together
+to test, run and visualize the results of different strategies.
+This is done mainly to spread the load to multiple cores."""
+
 from strategies import *
 import itertools
 import multiprocessing
 import subprocess
 import pickle
 import os
+import time
 from collections import defaultdict
 
 PLAYER_COUNT = 4
@@ -37,9 +42,6 @@ for base in bases:
 
 players = bases+players
 
-# players = [m(b) for m in modifiers for b in bases] + bases
-
-
 times = []
 
 results = []
@@ -50,10 +52,11 @@ games = []
 for p in itertools.combinations(players, PLAYER_COUNT):
     games.append(([str(player()) for player in p]))
 
+games = games[:10]
+
 print(cores)
 
 files = []
-
 
 for no, chunk in enumerate(chunks(games, cores)):
     filename = "chunk_%d" % no
@@ -63,8 +66,10 @@ for no, chunk in enumerate(chunks(games, cores)):
             f.write("\n")
     files.append(filename)
 
-processes = []
 
+result = defaultdict(lambda: [0]*PLAYER_COUNT)
+
+processes = []
 for file in files:
     processes.append(subprocess.Popen(["python3", "-u", "run_chunk.py", file, str(PLAYER_COUNT)]))
 
@@ -73,12 +78,20 @@ for file, process in zip(files, processes):
     res = defaultdict(lambda: [0]*PLAYER_COUNT, pickle.load(open("results_" + file, "rb")))
     results.append(res)
 
-os.system("rm results_* chunk_*")
-result = defaultdict(lambda: [0]*PLAYER_COUNT)
 for r in results:
     for k, v in r.items():
         result[k] = [k1 + k2 for k1, k2 in zip(result[k], r[k])]
 
+for file in files:
+    os.remove("results_%s" % file)
+
+for file in files:
+    os.remove(file)
+
+result = dict(result)
+
 l = sorted(result.items(), key=lambda x: x[1], reverse=True)
 for i in l:
     print(i[0], i[1])
+
+pickle.dump(l, open("strategy_list_"+str(int(time.time())), "wb"))
