@@ -1,3 +1,10 @@
+from random import randint
+
+
+def getnumber():
+    return randint(1, 6)
+
+
 class Board:
     sachovnice = []
     n = 0
@@ -22,6 +29,18 @@ class Board:
     def tlacsachovnicu(self):
         for radek in self.sachovnice:
             print(' '.join(radek))
+
+
+class Game:
+    board = Board()
+    player1 = Player()
+    player2 = Player()
+
+
+class Player:    
+
+    def __init__(self):
+        self.cnt = 0
 
 
 def main():
