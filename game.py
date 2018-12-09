@@ -132,6 +132,7 @@ class Game:
             print("Second player wins")
 
     def show(self):
+        print("___________________________________________________")
         i = 0
         self.board.fill_board()
         for chip in self.player1.chipsOnBoard:
@@ -143,13 +144,27 @@ class Game:
             self.board.board[chip.coordinates.x][chip.coordinates.y] = 'B%r' % i
         for row in self.board.board:
             print ('  '.join(row))
-        print("___________________________________________________")
 
     def move_chip(self, chip, n, player):
         coordinates = Coordinates(chip.coordinates.x, chip.coordinates.y)
         i = 0
         while n != 0:
             i += 1
+            if player.coordinates.x < player.coordinates.y:
+                if (coordinates.y == (self.board.n - 1) / 2 > coordinates.x
+                        and self.cant_go_to_base(n + coordinates.x, player) is False):
+                    coordinates.x += n
+                    return coordinates
+                elif coordinates.y == (self.board.n - 1) / 2 > coordinates.x:
+                    return
+            else:
+                if (coordinates.y == (self.board.n - 1) / 2 < coordinates.x
+                        and self.cant_go_to_base(self.board.n - coordinates.x + n, player) is False):
+                    coordinates.x -= n
+                    return coordinates
+                elif coordinates.y == (self.board.n - 1) / 2 > coordinates.x:
+                    return
+
             if coordinates.x == player.coordinates.x and \
                     (coordinates.y == player.coordinates.y - 1 or coordinates.y == player.coordinates.y + 1) \
                     and self.cant_go_to_base(n, player) is True:
@@ -161,6 +176,7 @@ class Game:
                     return Coordinates(player.coordinates.x + n, player.coordinates.y - 1)
                 else:
                     return Coordinates(player.coordinates.x - n, player.coordinates.y + 1)
+
             if coordinates.y <= (self.board.n - 1) / 2 and coordinates.x <= (self.board.n - 1) / 2:
                 if coordinates.y == coordinates.x:
                     coordinates.x -= 1
@@ -260,7 +276,7 @@ class Game:
                         chip.coordinates.y == player.coordinates.y):
                     temp += 1
                     break
-            if temp == 0:
+            if temp == 0 and len(player.chipsInHand) > 0:
                 choice = raw_input("put another chips on board?[Y/n]")
                 if choice == "Y":
                     certain_chip = player.chipsInHand[0]
