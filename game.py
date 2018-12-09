@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from random import randint
 import sys
 
@@ -13,6 +14,7 @@ class Board:
     def __init__(self):
         self.cnt = 0
 
+   #?????????? ??????? ?????????
     def fill_board(self):
         self.board = []
         for i in list(range(self.n)):
@@ -29,6 +31,7 @@ class Board:
                 else:
                     self.board[i].append('*')
 
+    #????????? ????? n
     def build_board(self):
         print("input odd n")
         n = input()
@@ -77,17 +80,6 @@ class Player:
         if x is not None and y is not None:
             self.coordinates = Coordinates(x, y)
 
-    def appendInHand(self, chip):
-        self.chipsOnBoard.remove(chip)
-        self.chipsInHand.append(chip)
-
-    def appendInBoard(self, chip):
-        self.chipsOnBoard.append(chip)
-        self.chipsInHand.remove(chip)
-
-    def appendAtHome(self, chip):
-        self.chipsAtHome.append(chip)
-
 
 class Game:
     board = Board()
@@ -100,6 +92,7 @@ class Game:
         self.player2 = Player(self.board.n - 1, (self.board.n - 1)/2 - 1, (self.board.n - 3) / 2)
         self.show()
 
+    #????????? ????? ?? ????? ? ??? ??? ??????? ????? ????? ??????
     def cant_go_to_base(self, n, player):
         if n > (self.board.n - 3) / 2:
             return True
@@ -115,6 +108,7 @@ class Game:
                             and chip.coordinates.y == player.coordinates.y + 1:
                         return True
 
+    #???? ????
     def play(self):
         while (len(self.player1.chipsAtHome) != (self.board.n - 3) / 2
                 or len(self.player1.chipsAtHome) != (self.board.n - 3) / 2):
@@ -131,6 +125,7 @@ class Game:
         else:
             print("Second player wins")
 
+    #????? ??????? ? ????? ?? ?????
     def show(self):
         print("___________________________________________________")
         i = 0
@@ -145,25 +140,23 @@ class Game:
         for row in self.board.board:
             print ('  '.join(row))
 
+    #???? ?????????? ????? ????? ????????????
+    #????? ???? ?????? ??? ????? ????????? ????????
     def move_chip(self, chip, n, player):
         coordinates = Coordinates(chip.coordinates.x, chip.coordinates.y)
-        i = 0
         while n != 0:
-            i += 1
-            if player.coordinates.x < player.coordinates.y:
-                if (coordinates.y == (self.board.n - 1) / 2 > coordinates.x
-                        and self.cant_go_to_base(n + coordinates.x, player) is False):
-                    coordinates.x += n
-                    return coordinates
-                elif coordinates.y == (self.board.n - 1) / 2 > coordinates.x:
-                    return
-            else:
-                if (coordinates.y == (self.board.n - 1) / 2 < coordinates.x
-                        and self.cant_go_to_base(self.board.n - coordinates.x + n, player) is False):
-                    coordinates.x -= n
-                    return coordinates
-                elif coordinates.y == (self.board.n - 1) / 2 > coordinates.x:
-                    return
+            if (coordinates.y == (self.board.n - 1) / 2 and coordinates.x < (self.board.n - 1) / 2
+                    and self.cant_go_to_base(n + coordinates.x, player) is False):
+                coordinates.x += n
+                return coordinates
+            elif coordinates.y == (self.board.n - 1) / 2 and coordinates.x < (self.board.n - 1) / 2:
+                return
+            if (coordinates.y == (self.board.n - 1) / 2 and coordinates.x > (self.board.n - 1) / 2
+                    and self.cant_go_to_base(self.board.n - coordinates.x + n, player) is False):
+                coordinates.x -= n
+                return coordinates
+            elif coordinates.y == (self.board.n - 1) / 2 and coordinates.x > (self.board.n - 1) / 2:
+                return
 
             if coordinates.x == player.coordinates.x and \
                     (coordinates.y == player.coordinates.y - 1 or coordinates.y == player.coordinates.y + 1) \
@@ -240,54 +233,77 @@ class Game:
                     n -= 1
         return coordinates
 
+    #????????? ???? ??????. ???????? ????? ?? ?? ??????, ?????????? ????? ????? ? ???????? ????? ?????? ???????
     def move_player(self, player, n):
+        #???? ?? ????? ??? ????? ? ?????? ?????? 6, ?? ??????? ????
         if n < 6 and len(player.chipsOnBoard) == 0:
             print("you miss a turn")
             return
+        #???? ??? ????? ? ?????? 6, ?? ?????? ??????????
         elif n == 6 and (len(player.chipsOnBoard) - len(player.chipsAtHome)) == 0:
-            temp = 0
-            for chip in self.player1.chipsOnBoard:
-                if (chip.coordinates.x == player.coordinates.x and
-                        chip.coordinates.y == player.coordinates.y):
-                    temp += 1
-                    break
-            for chip in self.player2.chipsOnBoard:
-                if (chip.coordinates.x == player.coordinates.x and
-                        chip.coordinates.y == player.coordinates.y):
-                    temp += 1
-                    break
-            if temp == 0:
-                certain_chip = player.chipsInHand[0]
-                certain_chip.coordinates = Coordinates(player.coordinates.x, player.coordinates.y)
-                player.appendInBoard(certain_chip)
-                return
+            if player is self.player1:
+                for chip in self.player2.chipsOnBoard:
+                    if (chip.coordinates.x == player.coordinates.x and
+                            chip.coordinates.y == player.coordinates.y):
+                        self.player2.chipsOnBoard.remove(chip)
+                        self.player2.chipsInHand.append(chip)
+                        break
             else:
-                print("you miss a turn")
-                return
+                for chip in self.player1.chipsOnBoard:
+                    if (chip.coordinates.x == player.coordinates.x and
+                            chip.coordinates.y == player.coordinates.y):
+                        self.player1.chipsOnBoard.remove(chip)
+                        self.player1.chipsInHand.append(chip)
+                        break
+            #???? ?? ????? ???? ?????? ????? ??????????, ?? ?????????? ????? ? ???? ? ????
+            certain_chip = player.chipsInHand[0]
+            certain_chip.coordinates = Coordinates(player.coordinates.x, player.coordinates.y)
+            player.chipsOnBoard.append(certain_chip)
+            player.chipsInHand.remove(certain_chip)
+            return
+        #???? ?? ?????? 6 ? ???? ?????? ?????, ?? ?????????? ?????
         elif n == 6 and len(player.chipsOnBoard) - len(player.chipsAtHome) != 0:
-            temp = 0
-            for chip in self.player1.chipsOnBoard:
-                if (chip.coordinates.x == player.coordinates.x and
-                        chip.coordinates.y == player.coordinates.y):
-                    temp += 1
-                    break
-            for chip in self.player2.chipsOnBoard:
-                if (chip.coordinates.x == player.coordinates.x and
-                        chip.coordinates.y == player.coordinates.y):
-                    temp += 1
-                    break
-            if temp == 0 and len(player.chipsInHand) > 0:
+            if len(player.chipsInHand) > 0:
                 choice = raw_input("put another chips on board?[Y/n]")
                 if choice == "Y":
-                    certain_chip = player.chipsInHand[0]
-                    certain_chip.coordinates = Coordinates(player.coordinates.x, player.coordinates.y)
-                    player.appendInBoard(certain_chip)
-                    return
+                    temp = 0
+                    if player is self.player1:
+                        for chip in self.player2.chipsOnBoard:
+                            if (chip.coordinates.x == player.coordinates.x and
+                                    chip.coordinates.y == player.coordinates.y):
+                                self.player2.chipsOnBoard.remove(chip)
+                                self.player2.chipsInHand.append(chip)
+                                break
+                        for chip in self.player1.chipsOnBoard:
+                            if (chip.coordinates.x == player.coordinates.x and
+                                    chip.coordinates.y == player.coordinates.y):
+                                temp += 1
+                                break
+                    else:
+                        for chip in self.player1.chipsOnBoard:
+                            if (chip.coordinates.x == player.coordinates.x and
+                                    chip.coordinates.y == player.coordinates.y):
+                                self.player1.chipsOnBoard.remove(chip)
+                                self.player1.chipsInHand.append(chip)
+                                break
+                        for chip in self.player2.chipsOnBoard:
+                            if (chip.coordinates.x == player.coordinates.x and
+                                    chip.coordinates.y == player.coordinates.y):
+                                temp += 1
+                                break
+                    if temp == 0:
+                        certain_chip = player.chipsInHand[0]
+                        certain_chip.coordinates = Coordinates(player.coordinates.x, player.coordinates.y)
+                        player.chipsOnBoard.append(certain_chip)
+                        player.chipsInHand.remove(certain_chip)
+                        return
+        #??????? ?????
         while True:
             if len(player.chipsOnBoard) > 1:
                 choice = raw_input("what chips to move?")
                 try:
                     choice = int(choice)
+                    choice -= 1
                 except ValueError:
                     print("not a number, restart program")
                     sys.exit()
@@ -296,10 +312,14 @@ class Game:
             if choice > (self.board.n - 3) / 2:
                 print("bad choice")
                 continue
-            coordinates = self.move_chip(player.chipsOnBoard[choice - 1], n, player)
+            coordinates = self.move_chip(player.chipsOnBoard[choice], n, player)
             if coordinates is None:
                 if len(player.chipsOnBoard) > 1:
-                    print("bad choice")
+                    for tempChip in player.chipsOnBoard:
+                        if self.move_chip(tempChip, n, player) is not None:
+                            print("bad choice")
+                        else:
+                            print("you miss a turn")
                     continue
                 else:
                     print("you miss a turn")
@@ -312,15 +332,17 @@ class Game:
             for chip in self.player1.chipsOnBoard:
                 if (coordinates.x == chip.coordinates.x and
                         coordinates.y == chip.coordinates.y):
-                    self.player1.appendInHand(chip)
+                    self.player1.chipsOnBoard.remove(chip)
+                    self.player1.chipsInHand.append(chip)
                     break
             for chip in self.player2.chipsOnBoard:
                 if (coordinates.x == chip.coordinates.x and
                         coordinates.y == chip.coordinates.y):
-                    self.player2.appendInHand(chip)
+                    self.player2.chipsOnBoard.remove(chip)
+                    self.player2.chipsInHand.append(chip)
                     break
-            player.chipsOnBoard[choice - 1].coordinates.x = coordinates.x
-            player.chipsOnBoard[choice - 1].coordinates.y = coordinates.y
+            player.chipsOnBoard[choice].coordinates.x = coordinates.x
+            player.chipsOnBoard[choice].coordinates.y = coordinates.y
             break
 
 
