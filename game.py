@@ -15,9 +15,9 @@ class Board:
 
     def fill_board(self):
         self.board = []
-        for i in range(self.n):
+        for i in list(range(self.n)):
             self.board.append([])
-            for j in range(self.n):
+            for j in list(range(self.n)):
                 if (j < ((self.n - 1) / 2 - 1) or j > ((self.n - 1) / 2 + 1)) and (
                         i < ((self.n - 1) / 2 - 1) or i > ((self.n - 1) / 2 + 1)):
                     self.board[i].append(' ')
@@ -71,7 +71,7 @@ class Player:
         self.chipsAtHome = []
         self.coordinates = None
         self.enable = True
-        for i in range(n):
+        for i in list(range(n//1)):
             temp = Chip(-1, -1)
             self.chipsInHand.append(temp)
         if x is not None and y is not None:
@@ -126,19 +126,24 @@ class Game:
             print('second player\'s move: \ndice number = %r' % roll)
             self.move_player(self.player2, roll)
             self.show()
+        if len(self.player1.chipsAtHome) != (self.board.n - 3) / 2:
+            print("First player wins")
+        else:
+            print("Second player wins")
 
     def show(self):
         i = 0
         self.board.fill_board()
         for chip in self.player1.chipsOnBoard:
             i += 1
-            self.board.board[chip.coordinates.x][chip.coordinates.y] = '\33[31m%r\033[0m' % i
+            self.board.board[chip.coordinates.x][chip.coordinates.y] = 'A%r' % i
         i = 0
         for chip in self.player2.chipsOnBoard:
             i += 1
-            self.board.board[chip.coordinates.x][chip.coordinates.y] = '\33[34m%r\033[0m' % i
+            self.board.board[chip.coordinates.x][chip.coordinates.y] = 'B%r' % i
         for row in self.board.board:
-            print (' '.join(row))
+            print ('  '.join(row))
+        print("___________________________________________________")
 
     def move_chip(self, chip, n, player):
         coordinates = Coordinates(chip.coordinates.x, chip.coordinates.y)
