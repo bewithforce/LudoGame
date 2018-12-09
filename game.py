@@ -145,18 +145,20 @@ class Game:
     def move_chip(self, chip, n, player):
         coordinates = Coordinates(chip.coordinates.x, chip.coordinates.y)
         while n != 0:
-            if (coordinates.y == (self.board.n - 1) / 2 and coordinates.x < (self.board.n - 1) / 2
-                    and self.cant_go_to_base(n + coordinates.x, player) is False):
-                coordinates.x += n
-                return coordinates
-            elif coordinates.y == (self.board.n - 1) / 2 and coordinates.x < (self.board.n - 1) / 2:
-                return
-            if (coordinates.y == (self.board.n - 1) / 2 and coordinates.x > (self.board.n - 1) / 2
-                    and self.cant_go_to_base(self.board.n - coordinates.x + n, player) is False):
-                coordinates.x -= n
-                return coordinates
-            elif coordinates.y == (self.board.n - 1) / 2 and coordinates.x > (self.board.n - 1) / 2:
-                return
+            if player.coordinates.x == 0:
+                if (coordinates.y == (self.board.n - 1) / 2 and coordinates.x < (self.board.n - 1) / 2
+                        and self.cant_go_to_base(n + coordinates.x, player) is False):
+                    coordinates.x += n
+                    return coordinates
+                elif coordinates.y == (self.board.n - 1) / 2 and coordinates.x < (self.board.n - 1) / 2:
+                    return
+            else:
+                if (coordinates.y == (self.board.n - 1) / 2 and coordinates.x > (self.board.n - 1) / 2
+                        and self.cant_go_to_base(self.board.n - coordinates.x + n, player) is False):
+                    coordinates.x -= n
+                    return coordinates
+                elif coordinates.y == (self.board.n - 1) / 2 and coordinates.x > (self.board.n - 1) / 2:
+                    return
 
             if coordinates.x == player.coordinates.x and \
                     (coordinates.y == player.coordinates.y - 1 or coordinates.y == player.coordinates.y + 1) \
@@ -165,7 +167,7 @@ class Game:
             elif coordinates.x == player.coordinates.x and \
                     (coordinates.y == player.coordinates.y - 1 or coordinates.y == player.coordinates.y + 1):
                 player.chipsAtHome.append(chip)
-                if player.coordinates.x < player.coordinates.y:
+                if player.coordinates.x == 0:
                     return Coordinates(player.coordinates.x + n, player.coordinates.y - 1)
                 else:
                     return Coordinates(player.coordinates.x - n, player.coordinates.y + 1)
