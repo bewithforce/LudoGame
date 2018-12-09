@@ -278,11 +278,16 @@ class Game:
             coordinates = self.move_chip(player.chipsOnBoard[choice - 1], n, player)
             if coordinates is None:
                 if len(player.chipsOnBoard) > 1:
-                    print("bad choices")
+                    print("bad choice")
                     continue
                 else:
                     print("you miss a turn")
                     break
+            for chip in player.chipsOnBoard:
+                if (coordinates.x == chip.coordinates.x and
+                        coordinates.y == chip.coordinates.y):
+                    print("bad choice")
+                    continue
             for chip in self.player1.chipsOnBoard:
                 if (coordinates.x == chip.coordinates.x and
                         coordinates.y == chip.coordinates.y):
