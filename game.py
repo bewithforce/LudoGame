@@ -126,7 +126,7 @@ class Game:
             print('second player\'s move: \ndice number = %r' % roll)
             self.move_player(self.player2, roll)
             self.show()
-        if len(self.player1.chipsAtHome) != (self.board.n - 3) / 2:
+        if len(self.player1.chipsAtHome) == (self.board.n - 3) / 2:
             print("First player wins")
         else:
             print("Second player wins")
