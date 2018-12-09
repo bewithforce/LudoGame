@@ -88,15 +88,14 @@ class Game:
         self.board.build_board()
         self.player1 = Player(0, (self.board.n + 1) / 2)
         self.player2 = Player(self.board.n - 1, (self.board.n - 1)/2 - 1)
-#        self.show()
+        self.show()
         self.cnt = 0
 
     def play(self):
         roll = get_number()
         print('first player\'s move: \ndice number = %r' % roll)
         self.move_player(self.player1, 6)
-#        self.show()
-        self.move_player(self.player1, roll)
+        self.move_player(self.player1, 25)
         self.show()
 
     def show(self):
@@ -104,7 +103,6 @@ class Game:
         self.board.fill_board()
         for chip in self.player1.chipsOnBoard:
             i += 1
-            print chip.coordinates.x, chip.coordinates.y
             self.board.board[chip.coordinates.x][chip.coordinates.y] = '\33[31m%r\033[0m' % i
         i = 0
         for chip in self.player2.chipsOnBoard:
@@ -114,76 +112,76 @@ class Game:
             print (' '.join(row))
 
     def move_chip(self, chip, n):
+        coordinates = Coordinates(chip.coordinates.x, chip.coordinates.y)
+        i = 0
         while n != 0:
-            if chip.coordinates.y <= (self.board.n - 1) / 2 and chip.coordinates.x <= (self.board.n - 1) / 2:
-                if chip.coordinates.y == chip.coordinates.x:
+            i += 1
+            if coordinates.y <= (self.board.n - 1) / 2 and coordinates.x <= (self.board.n - 1) / 2:
+                if coordinates.y == coordinates.x:
+                    coordinates.x -= 1
                     n -= 1
-                    chip.coordinates.x -= 1
-                elif chip.coordinates.x == (self.board.n - 1) / 2:
+                elif coordinates.x == (self.board.n - 1) / 2:
+                    coordinates.x -= 1
                     n -= 1
-                    chip.coordinates.x -= 1
-                elif chip.coordinates.x == (self.board.n - 1) / 2 - 1:
-                    chip.coordinates.y += 1
-                    n -= 1
-                elif chip.coordinates.y == (self.board.n - 1) / 2 - 1:
-                    if chip.coordinates.x == 0:
-                        chip.coordinates.y += 1
-                        n -= 1
-                    else:
-                        chip.coordinates.y += 1
-                        n -= 1
-            elif chip.coordinates.y > (self.board.n - 1) / 2 > chip.coordinates.x:
-                if self.board.n - 1 - chip.coordinates.x == chip.coordinates.y:
-                    n -= 1
-                    chip.coordinates.y += 1
-                elif chip.coordinates.x == (self.board.n + 1) / 2:
-                    chip.coordinates.y += 1
+                elif coordinates.x == (self.board.n - 1) / 2 - 1:
+                    coordinates.y += 1
                     n -= 1
                 else:
-                    if chip.coordinates.x == self.board.n - 1:
+                    if coordinates.x == 0:
+                        coordinates.y += 1
                         n -= 1
-                        chip.coordinates.y += 1
                     else:
-                        chip.coordinates.x += 1
+                        coordinates.x -= 1
                         n -= 1
-            elif chip.coordinates.y < (self.board.n - 1) / 2 < chip.coordinates.x:
-                if self.board.n - 1 - chip.coordinates.y == chip.coordinates.x:
+            elif coordinates.y > (self.board.n - 1) / 2 > coordinates.x:
+                if self.board.n - 1 - coordinates.x == coordinates.y:
+                    coordinates.y += 1
                     n -= 1
-                    chip.coordinates.y -= 1
-                elif chip.coordinates.y == (self.board.n - 1) / 2 - 1:
-                    chip.coordinates.x -= 1
+                elif coordinates.y == (self.board.n + 1) / 2:
+                    coordinates.x += 1
                     n -= 1
                 else:
-                    if chip.coordinates.y == 0:
+                    if coordinates.y == self.board.n - 1:
+                        coordinates.x += 1
                         n -= 1
-                        chip.coordinates.x -= 1
                     else:
-                        chip.coordinates.y -= 1
+                        coordinates.y += 1
+                        n -= 1
+            elif coordinates.y < (self.board.n - 1) / 2 < coordinates.x:
+                if self.board.n - 1 - coordinates.y == coordinates.x:
+                    coordinates.y -= 1
+                    n -= 1
+                elif coordinates.y == (self.board.n - 1) / 2 - 1:
+                    coordinates.x -= 1
+                    n -= 1
+                else:
+                    if coordinates.y == 0:
+                        coordinates.x -= 1
+                        n -= 1
+                    else:
+                        coordinates.y -= 1
                         n -= 1
             else:
-                if chip.coordinates.y == chip.coordinates.x:
+                if coordinates.y == coordinates.x:
                     n -= 1
-                    chip.coordinates.x += 1
-                elif chip.coordinates.y == self.board.n - 1:
-                    if chip.coordinates.x == (self.board.n - 1) / 2:
-                        n -= 1
-                        chip.coordinates.x += 1
-                    else:
-                        chip.coordinates.y += 1
-                        n -= 1
-                elif chip.coordinates.y == (self.board.n - 1) / 2 - 1:
-                    chip.coordinates.y += 1
+                    coordinates.x += 1
+                elif coordinates.x == self.board.n - 1:
+                    coordinates.y -= 1
                     n -= 1
-                elif chip.coordinates.x == 0:
-                    chip.coordinates.y += 1
+                elif coordinates.x == (self.board.n - 1) / 2:
+                    coordinates.x += 1
                     n -= 1
-                else:
-                    chip.coordinates.x -= 1
+                elif coordinates.x == (self.board.n + 1) / 2:
+                    coordinates.y -= 1
                     n -= 1
+                elif coordinates.y == (self.board.n + 1) / 2:
+                    coordinates.x += 1
+                    n -= 1
+        return coordinates
 
     def move_player(self, player, n):
         if n < 6 and len(player.chipsOnBoard) == 0:
-            print "you miss a turn"
+            print("you miss a turn")
             return
         elif n == 6 and len(player.chipsOnBoard) == 0:
             temp = 0
@@ -200,12 +198,11 @@ class Game:
             if temp == 0:
                 certain_chip = player.chipsInHand[0]
                 certain_chip.coordinates = Coordinates(player.coordinates.x, player.coordinates.y)
-                print certain_chip.coordinates.x, certain_chip.coordinates.y
                 player.chipsOnBoard.append(certain_chip)
                 player.chipsInHand.remove(certain_chip)
                 return
             else:
-                print "you miss a turn"
+                print("you miss a turn")
                 return
         elif n == 6 and len(player.chipsOnBoard) != 4:
             temp = 0
@@ -227,16 +224,37 @@ class Game:
                     player.chipsOnBoard.append(certain_chip)
                     player.chipsInHand.remove(certain_chip)
                     return
-        if len(player.chipsOnBoard) > 1:
-            choice = raw_input("what chips to move?")
-            try:
-                choice = int(choice)
-            except ValueError:
-                print("not a number, restart program")
-                sys.exit()
-        else:
-            choice = 0
-        self.move_chip(player.chipsOnBoard[choice], n)
+        while True:
+            if len(player.chipsOnBoard) > 1:
+                choice = raw_input("what chips to move?")
+                try:
+                    choice = int(choice)
+                except ValueError:
+                    print("not a number, restart program")
+                    sys.exit()
+            else:
+                choice = 0
+            if choice > 4:
+                print("bad choice")
+                continue
+            coordinates = self.move_chip(player.chipsOnBoard[choice], n)
+            temp = 0
+            for chip in self.player1.chipsOnBoard:
+                if (coordinates.x == chip.coordinates.x and
+                        coordinates.y == chip.coordinates.y):
+                    temp += 1
+                    break
+            for chip in self.player2.chipsOnBoard:
+                if (coordinates.x == chip.coordinates.x and
+                        coordinates.y == chip.coordinates.y):
+                    temp += 1
+                    break
+            if temp != 0:
+                print("bad choice")
+            else:
+                player.chipsOnBoard[choice].coordinates.x = coordinates.x
+                player.chipsOnBoard[choice].coordinates.y = coordinates.y
+                break
 
 
 def main():
